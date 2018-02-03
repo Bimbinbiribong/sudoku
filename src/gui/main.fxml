@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+
+<?import javafx.scene.control.Label?>
+<VBox fx:controller="gui.MainController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112">
+    <fx:define>
+        <Label fx:id="newGameLabel" text="LABEL" onMouseClicked="#newGame"/>
+    </fx:define>
+    <children>
+        <MenuBar>
+            <Menu fx:id="newGameMenu">
+                <graphic>
+                    <Label text="New game" onMouseClicked="#newGame"/>
+                </graphic>
+            </Menu>
+            <Menu text="Hint" disable="true"/>
+        </MenuBar>
+        <GridPane fx:id="grid">
+
+        </GridPane>
+    </children>
+</VBox>
