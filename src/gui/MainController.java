@@ -99,7 +99,7 @@ public class MainController {
         choiceDialog.setTitle("New game dialog");
         choiceDialog.setHeaderText("");
         choiceDialog.setContentText("Choose difficulty");
-        // TODO: set things
+        // set things
 
         Optional<Difficulty> dialogResult = choiceDialog.showAndWait();
 
