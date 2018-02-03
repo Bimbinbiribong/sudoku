@@ -3,6 +3,10 @@ package sudoku;
 /**
  * Created by honza on 2.2.18.
  */
+
+/**
+ * Represents coordinate on the board.
+ */
 public class Coordinate {
     private int row;
     private int column;

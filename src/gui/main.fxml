@@ -10,12 +10,9 @@
 
 <?import javafx.scene.control.Label?>
 <VBox fx:controller="gui.MainController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112">
-    <fx:define>
-        <Label fx:id="newGameLabel" text="LABEL" onMouseClicked="#newGame"/>
-    </fx:define>
     <children>
         <MenuBar>
-            <Menu fx:id="newGameMenu">
+            <Menu>
                 <graphic>
                     <Label text="New game" onMouseClicked="#newGame"/>
                 </graphic>

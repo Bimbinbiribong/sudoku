@@ -23,23 +23,22 @@ public class EvaluationBoard implements Cloneable {
     private int[][] fields;
 
     /**
-     * Represents numbers that can be used on (i, j) coordinate (0-9)
+     * Represents numbers that cannot be used on (i, j) coordinate (0-9)
      * e.g. on coordinates [i][j][4] = true means that in the (i,j) coordinate number 5 cannot be used
      */
-    private boolean[][][] occupiedNumbers;
+    private boolean[][][] unavailableNumbers;
 
     /**
-     * Represents list of options for each (i,j) cell. For each coordinates there are numbers 1-10
-     * representing options that algorithm can choose from. Those numbers are sorted randomly
-     * so algorithm won't always return same result.
+     * Represents list of options for each (i,j) cell. For each there is a permutation of 1-10 numbers.
+     * This represents a randomness in Sudoku board generation.
      */
     private List<List<List<Integer>>> options;
 
     private List<Move> solution;
 
-    private EvaluationBoard(int[][] fields, boolean[][][] occupiedNumbers, List<List<List<Integer>>> options) {
+    private EvaluationBoard(int[][] fields, boolean[][][] unavailableNumbers, List<List<List<Integer>>> options) {
         this.fields = fields;
-        this.occupiedNumbers = occupiedNumbers;
+        this.unavailableNumbers = unavailableNumbers;
         this.options = options;
     }
 
@@ -54,12 +53,12 @@ public class EvaluationBoard implements Cloneable {
             fields[i] = new int[boardSize];
         }
 
-        // initialize occupiedNumbers
-        occupiedNumbers = new boolean[boardSize][][];
+        // initialize unavailableNumbers
+        unavailableNumbers = new boolean[boardSize][][];
         for (int i = 0; i < boardSize; i++) {
-            occupiedNumbers[i] = new boolean[boardSize][];
+            unavailableNumbers[i] = new boolean[boardSize][];
             for (int j = 0; j < boardSize; j++) {
-                occupiedNumbers[i][j] = new boolean[boardSize];
+                unavailableNumbers[i][j] = new boolean[boardSize];
             }
         }
 
@@ -111,12 +110,12 @@ public class EvaluationBoard implements Cloneable {
                 newFields[r] = fields[r].clone();
             }
         }
-        boolean[][][] newOccupiedNumbers = new boolean[occupiedNumbers.length][][];
+        boolean[][][] newOccupiedNumbers = new boolean[unavailableNumbers.length][][];
         {
-            for (int i = 0; i < occupiedNumbers.length; i++) {
-                newOccupiedNumbers[i] = new boolean[occupiedNumbers.length][];
-                for (int j = 0; j < occupiedNumbers.length; j++) {
-                    newOccupiedNumbers[i][j] = Arrays.copyOf(occupiedNumbers[i][j], occupiedNumbers[i][j].length);
+            for (int i = 0; i < unavailableNumbers.length; i++) {
+                newOccupiedNumbers[i] = new boolean[unavailableNumbers.length][];
+                for (int j = 0; j < unavailableNumbers.length; j++) {
+                    newOccupiedNumbers[i][j] = Arrays.copyOf(unavailableNumbers[i][j], unavailableNumbers[i][j].length);
                 }
             }
         }
@@ -124,7 +123,7 @@ public class EvaluationBoard implements Cloneable {
     }
 
     /**
-     * Generates valid Sudoku games returning result in the results list.
+     * Generates valid Sudoku games returning result in the results list using backtracking.
      * @param rowIndex
      * @param columnIndex
      * @param results
@@ -135,9 +134,11 @@ public class EvaluationBoard implements Cloneable {
             return;
         }
 
-        for (int k = 0; k < occupiedNumbers[rowIndex][columnIndex].length; k++) {
+        // strategy = for each field recursively find a correct sudoku solution
+        // if you find it => jump out of the function
+        for (int k = 0; k < unavailableNumbers[rowIndex][columnIndex].length; k++) {
             int value = options.get(rowIndex).get(columnIndex).get(k);
-            if (!occupiedNumbers[rowIndex][columnIndex][value - 1]) {
+            if (!unavailableNumbers[rowIndex][columnIndex][value - 1]) {
                 EvaluationBoard newBoard = (EvaluationBoard)this.clone();
                 newBoard.setField(rowIndex, columnIndex, value);
 
@@ -157,9 +158,8 @@ public class EvaluationBoard implements Cloneable {
     }
 
     /**
-     * Resets fields such way so the board has unique solution (only one solution).
+     * Resets fields such way so the board has unique solution (only one solution). Is computationally expensive.
      * @param numberOfFieldsToReset Number of fields that the algorithm will reset.
-     * @throws CloneNotSupportedException
      */
     public EvaluationBoard resetFields(int numberOfFieldsToReset) {
         EvaluationBoard resetBoard = null;
@@ -170,6 +170,7 @@ public class EvaluationBoard implements Cloneable {
             return null;
         }
         Random random = new Random();
+        // strategy = reset random field, check if it still has unique solution, repeat at most numberOfFieldsToReset times
         for (int i = 0; i < numberOfFieldsToReset; i++) {
             for (int j = 0; ; j++) {
                 int row = random.nextInt(9);
@@ -211,7 +212,7 @@ public class EvaluationBoard implements Cloneable {
     }
 
     /**
-     * Reports whether this board has (one) unique solution.
+     * Reports whether this board has (one) unique solution. Is computationaly expensive.
      * @return
      * @throws CloneNotSupportedException
      */
@@ -242,7 +243,7 @@ public class EvaluationBoard implements Cloneable {
         int row = current.getRow();
         int column = current.getColumn();
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            if (!occupiedNumbers[row][column][i]) {
+            if (!unavailableNumbers[row][column][i]) {
                 int value = i + 1;
 
                 EvaluationBoard newBoard = (EvaluationBoard)this.clone();
@@ -270,6 +271,12 @@ public class EvaluationBoard implements Cloneable {
         return coordinates;
     }
 
+    /**
+     * Sets field to the new value, refreshing @unavailableNumbers.
+     * @param rowIndex
+     * @param columnIndex
+     * @param value
+     */
     private void setField(int rowIndex, int columnIndex, int value) {
         fields[rowIndex][columnIndex] = value;
 
@@ -277,12 +284,12 @@ public class EvaluationBoard implements Cloneable {
 
         // update row
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            occupiedNumbers[rowIndex][i][indexFromValue] = true;
+            unavailableNumbers[rowIndex][i][indexFromValue] = true;
         }
 
         // update column
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            occupiedNumbers[i][columnIndex][indexFromValue] = true;
+            unavailableNumbers[i][columnIndex][indexFromValue] = true;
         }
 
         Coordinate coordinate = getAreaFirstCoordinate(rowIndex, columnIndex);
@@ -293,11 +300,16 @@ public class EvaluationBoard implements Cloneable {
         for (int i = firstRowIndex; i < firstRowIndex + Board.AREA_SIZE; i++) {
             for (int j = firstColumnIndex; j < firstColumnIndex + Board.AREA_SIZE; j++) {
                 // if it is a different cell and there is same number in that same cell => cell is not correct after move
-                occupiedNumbers[i][j][indexFromValue] = true;
+                unavailableNumbers[i][j][indexFromValue] = true;
             }
         }
     }
 
+    /**
+     * Resets field, refreshing @unavailableNumbers.
+     * @param rowIndex
+     * @param columnIndex
+     */
     private void resetField(int rowIndex, int columnIndex) {
         int previousValueIndex = fields[rowIndex][columnIndex] - 1;
 
@@ -305,12 +317,12 @@ public class EvaluationBoard implements Cloneable {
 
         // update row
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            occupiedNumbers[rowIndex][i][previousValueIndex] = false;
+            unavailableNumbers[rowIndex][i][previousValueIndex] = false;
         }
 
         // update column
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            occupiedNumbers[i][columnIndex][previousValueIndex] = false;
+            unavailableNumbers[i][columnIndex][previousValueIndex] = false;
         }
 
         Coordinate coordinate = getAreaFirstCoordinate(rowIndex, columnIndex);
@@ -321,17 +333,17 @@ public class EvaluationBoard implements Cloneable {
         for (int i = firstRowIndex; i < firstRowIndex + Board.AREA_SIZE; i++) {
             for (int j = firstColumnIndex; j < firstColumnIndex + Board.AREA_SIZE; j++) {
                 // if it is a different cell and there is same number in that same cell => cell is not correct after move
-                occupiedNumbers[i][j][previousValueIndex] = false;
+                unavailableNumbers[i][j][previousValueIndex] = false;
             }
         }
     }
 
-    private Coordinate getCoordinate(int index) {
-        int row = index / Board.BOARD_SIZE;
-        int column = index % Board.BOARD_SIZE;
-        return new Coordinate(row, column);
-    }
-
+    /**
+     * Obtains area first coordinate (left-upper most coordinate) from the field coordinates (@rowIndex and @columnIndex).
+     * @param rowIndex Row index of the field whose area we want to identify.
+     * @param columnIndex Column index of the field whose area we want to identify.
+     * @return Left-upper most coordinate of the area containing the field.
+     */
     private Coordinate getAreaFirstCoordinate(int rowIndex, int columnIndex) {
         // update cell
         // initialize to get first row and column index of the cell so we can iterate through it

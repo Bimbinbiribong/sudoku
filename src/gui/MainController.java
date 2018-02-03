@@ -18,12 +18,6 @@ import sudoku.objects.Field;
 import java.util.Optional;
 
 public class MainController {
-    @FXML
-    private Menu newGameMenu;
-
-    @FXML
-    private Label newGameLabel;
-
     private TextField[][] fields;
     private Sudoku sudoku;
 
@@ -92,20 +86,28 @@ public class MainController {
         return newTextField;
     }
 
+    /**
+     * Is invoked when New game menu button is pressed.
+     * @param event
+     */
     @FXML
-    public void newGame(MouseEvent event) {
-        // choose from difficulties
+    private void newGame(MouseEvent event) {
+        // set up choice dialog
         ChoiceDialog<Difficulty> choiceDialog = new ChoiceDialog<>(Difficulty.MEDIUM, Difficulty.values());
         choiceDialog.setTitle("New game dialog");
         choiceDialog.setHeaderText("");
         choiceDialog.setContentText("Choose difficulty");
-        // set things
 
+        // open dialog
         Optional<Difficulty> dialogResult = choiceDialog.showAndWait();
 
+        // if there OK was pressed
         if (dialogResult.isPresent()) {
+            // get the chosen answer
             Difficulty chosenDifficulty = dialogResult.get();
+            // generate the new game
             sudoku = Sudoku.generateNewGame(chosenDifficulty);
+            // display the newly generated game
             generateGUI(sudoku.getBoard());
         }
     }

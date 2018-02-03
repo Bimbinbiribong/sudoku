@@ -34,6 +34,11 @@ public class Board {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Creates @{@link Board} from @{@link EvaluationBoard} instance.
+     * @param evaluationBoard
+     * @return
+     */
     public static Board fromEvaluationBoard(EvaluationBoard evaluationBoard) {
         Board board = new Board();
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -47,6 +52,10 @@ public class Board {
         return board;
     }
 
+    /**
+     * Plays a move. Throws exception if the move is incorrect.
+     * @param move Move to be played
+     */
     public void play(Move move) {
         int row = move.getRow();
         int column = move.getColumn();
@@ -87,6 +96,11 @@ public class Board {
         fields[row][column].setValue(value);
     }
 
+    /**
+     * Verifies whether after the move cells are still valid.
+     * @param move
+     * @return
+     */
     private boolean areCellsValidAfterMove(Move move) {
         int row = move.getRow();
         int column = move.getColumn();
