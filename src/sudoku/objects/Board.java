@@ -1,6 +1,10 @@
 package sudoku.objects;
 
+import sudoku.Coordinate;
 import sudoku.fastObjects.EvaluationBoard;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by honza on 1.2.18.
@@ -52,6 +56,18 @@ public class Board {
         return board;
     }
 
+    public List<Coordinate> getUnoccupiedFieldsCoordinates() {
+        List<Coordinate> coordinates = new ArrayList<>();
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            for (int j = 0; j < Board.BOARD_SIZE; j++) {
+                if (!fields[i][j].hasValue()) {
+                    coordinates.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return coordinates;
+    }
+
     /**
      * Plays a move. Throws exception if the move is incorrect.
      * @param move Move to be played
@@ -61,100 +77,11 @@ public class Board {
         int column = move.getColumn();
         int value = move.getNumber();
 
-        // check cell
-        if (fields[row][column].hasValue()) {
-            throw new IllegalArgumentException("Cannot play to this coordinates, field is already occupied.");
-        }
-
-        // check row
-        for (int i = 0; i < fields[row].length; i++) {
-            if (i != column && fields[row][i].hasValue()) {
-                int val = fields[row][i].getValue();
-
-                if (val == value) {
-                    throw new IllegalArgumentException("Row is already occupied by this number");
-                }
-            }
-        }
-
-        // check column
-        for (int i = 0; i < fields[i].length; i++) {
-            if (i != row && fields[i][column].hasValue()) {
-                int val = fields[i][column].getValue();
-
-                if (val == value) {
-                    throw new IllegalArgumentException("Column is already occupied by this number");
-                }
-            }
-        }
-
-        // check cell
-        if (!areCellsValidAfterMove(move)) {
-            throw new IllegalArgumentException("Cell rule has been broken by this move.");
-        }
-
         fields[row][column].setValue(value);
     }
 
-    /**
-     * Verifies whether after the move cells are still valid.
-     * @param move
-     * @return
-     */
-    private boolean areCellsValidAfterMove(Move move) {
-        int row = move.getRow();
-        int column = move.getColumn();
-
-        // initialize to get first row and column index of the cell so we can iterate through it
-        int firstRowIndex;
-        int firstColumnIndex;
-        if (row < AREA_SIZE && column < AREA_SIZE) {
-            firstRowIndex = 0;
-            firstColumnIndex = 0;
-        }
-        else if (row < AREA_SIZE && column >= AREA_SIZE && column < 2 * AREA_SIZE) {
-            firstRowIndex = 0;
-            firstColumnIndex = AREA_SIZE;
-        }
-        else if (row < AREA_SIZE && column >= 2 * AREA_SIZE) {
-            firstRowIndex = 0;
-            firstColumnIndex = 2 * AREA_SIZE;
-        }
-        else if ((row >= AREA_SIZE && row < 2 * AREA_SIZE) && column < AREA_SIZE) {
-            firstRowIndex = AREA_SIZE;
-            firstColumnIndex = 0;
-        }
-        else if (row >= AREA_SIZE && row < 2 * AREA_SIZE && column >= AREA_SIZE && column < 2 * AREA_SIZE) {
-            firstRowIndex = AREA_SIZE;
-            firstColumnIndex = AREA_SIZE;
-        }
-        else if (row >= AREA_SIZE && row < 2 * AREA_SIZE && column >= 2 * AREA_SIZE) {
-            firstRowIndex = AREA_SIZE;
-            firstColumnIndex = 2 * AREA_SIZE;
-        }
-        else if (row >= 2 * AREA_SIZE && column < AREA_SIZE) {
-            firstRowIndex = 2 * AREA_SIZE;
-            firstColumnIndex = 0;
-        }
-        else if (row >= 2 * AREA_SIZE && column >= AREA_SIZE && column < 2 * AREA_SIZE) {
-            firstRowIndex = 2 * AREA_SIZE;
-            firstColumnIndex = AREA_SIZE;
-        }
-        else {
-            firstRowIndex = 2 * AREA_SIZE;
-            firstColumnIndex = 2 * AREA_SIZE;
-        }
-
-        for (int i = firstRowIndex; i < firstRowIndex + AREA_SIZE; i++) {
-            for (int j = firstColumnIndex; j < firstColumnIndex + AREA_SIZE; j++) {
-                // if it is a different cell and there is same number in that same cell => cell is not correct after move
-                if ((row != i|| column != j) && fields[i][j].hasValue()
-                        && fields[i][j].getValue() == move.getNumber()) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+    public boolean isValid() {
+        // TODO
+        throw new UnsupportedOperationException();
     }
 }

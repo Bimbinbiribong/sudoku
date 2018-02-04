@@ -17,7 +17,11 @@
                     <Label text="New game" onMouseClicked="#newGame"/>
                 </graphic>
             </Menu>
-            <Menu text="Hint" disable="true"/>
+            <Menu>
+                <graphic>
+                    <Label fx:id="hintLabel" text="Hint" onMouseClicked="#displayHint" disable="true"/>
+                </graphic>
+            </Menu>
         </MenuBar>
         <GridPane fx:id="grid">
 
