@@ -8,7 +8,18 @@ package sudoku;
  * Represents difficulty of the game.
  */
 public enum Difficulty {
-    EASY,
-    MEDIUM,
-    HARD
+    EASY("Easy"),
+    MEDIUM("Medium"),
+    HARD("Hard");
+
+    private String value;
+
+    Difficulty(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

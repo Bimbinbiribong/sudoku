@@ -16,10 +16,10 @@ public class Field {
 
     public Field(int value) {
         if (value == -1) {
-            value = -1;
+            this.value = -1;
         }
         else {
-            setValue(-1);
+            setValue(value);
         }
     }
 
