@@ -1,0 +1,6 @@
+.text-field {
+    -fx-alignment: center;
+    -fx-font-size: 20pt;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
