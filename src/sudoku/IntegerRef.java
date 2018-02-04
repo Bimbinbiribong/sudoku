@@ -5,7 +5,7 @@ package sudoku;
  */
 
 /**
- * Is non-immutable version of Integer.
+ * Is mutable version of Integer.
  */
 public class IntegerRef {
     private int value;
@@ -24,6 +24,9 @@ public class IntegerRef {
         this.value = value;
     }
 
+    /**
+     * Increments value of the integer.
+     */
     public void increment() {
         value++;
     }

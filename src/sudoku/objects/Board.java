@@ -30,12 +30,14 @@ public class Board {
         this.fields = fields;
     }
 
+    /**
+     * Obtains field on @i @j coordinate.
+     * @param i
+     * @param j
+     * @return
+     */
     public Field getField(int i, int j) {
         return fields[i][j];
-    }
-
-    public Move getHint() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -56,6 +58,10 @@ public class Board {
         return board;
     }
 
+    /**
+     * Obtains fields of the board, such that they are empty (no number on them).
+     * @return
+     */
     public List<Coordinate> getUnoccupiedFieldsCoordinates() {
         List<Coordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
@@ -80,8 +86,18 @@ public class Board {
         fields[row][column].setValue(value);
     }
 
-    public boolean isValid() {
-        // TODO
-        throw new UnsupportedOperationException();
+    /**
+     * Reports whether the game board is filled.
+     * @return True, if there are all fields filled, false otherwise.
+     */
+    public boolean isFilled() {
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            for (int j = 0; j < Board.BOARD_SIZE; j++) {
+                if (!fields[i][j].hasValue()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

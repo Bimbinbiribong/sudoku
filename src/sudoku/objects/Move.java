@@ -5,6 +5,10 @@ import sudoku.Coordinate;
 /**
  * Created by honza on 1.2.18.
  */
+
+/**
+ * Represents one move of the game.
+ */
 public class Move {
     private int row;
     private int column;
@@ -22,14 +26,26 @@ public class Move {
         this.number = number;
     }
 
+    /**
+     * Obtains row index of the field, where the player moved.
+     * @return
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Obtains column index of the field, where the player moved.
+     * @return
+     */
     public int getColumn() {
         return column;
     }
 
+    /**
+     * Obtains number, which player wrote to the field.
+     * @return
+     */
     public int getNumber() {
         return number;
     }
